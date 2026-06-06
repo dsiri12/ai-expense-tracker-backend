@@ -20,14 +20,16 @@ export const register = async (req, res) => {
         return res.status(400).json({ message: 'Password must be at least 6 characters' });
     }
 
-    const client = await pool.connect();
+    const client = await pool.connect(); // Needed for transactions.
     try {
         const existing = await client.query('SELECT id FROM users WHERE email = $1', [email]);
+         // Parameterized query. Protects against SQL injection
+
         if (existing.rows.length > 0) {
             return res.status(400).json({ message: 'Email already registered' });
         }
 
-        await client.query('BEGIN');
+        await client.query('BEGIN'); // transactions begin
 
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(password, salt);
@@ -48,16 +50,19 @@ export const register = async (req, res) => {
             );
         }
 
-        await client.query('COMMIT');
+        await client.query('COMMIT'); // transactions COMMIT, Saves all database changes permanently.
 
-        const token = signToken(user.id);
+        const token = signToken(user.id); // authentication token
+
         res.status(201).json({ user, token });
     } catch (error) {
-        await client.query('ROLLBACK');
+        await client.query('ROLLBACK'); // transactions rollback, Undo database changes, Prevents half-finished data.
+
         console.error('Register error:', error);
         res.status(500).json({ message: 'Server error' });
     } finally {
-        client.release();
+        client.release(); 
+        // Returns connection back to pool. without this, connections leak, database eventually freezes
     }
 };
 
@@ -76,6 +81,7 @@ export const login = async (req, res) => {
             'SELECT id, name, email, password_hash, currency FROM users WHERE email = $1',
             [email]
         );
+        // Looks up user by email.
 
         if (result.rows.length === 0) {
             return res.status(400).json({ message: 'Invalid credentials' });
@@ -83,6 +89,8 @@ export const login = async (req, res) => {
 
         const user = result.rows[0];
         const match = await bcrypt.compare(password, user.password_hash);
+        // Checks plain password against hashed password.
+
         if (!match) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
@@ -97,6 +105,8 @@ export const login = async (req, res) => {
             },
             token,
         });
+        // Very important for security. Never return password hash or any sensitive info.
+
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ message: 'Server error' });
@@ -117,9 +127,65 @@ export const getMe = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        res.json(result.rows[0]);
+        res.json(result.rows[0]); // return profile info, but never return password hash or any sensitive info.
     } catch (error) {
         console.error('GetMe error:', error);
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+/*
+Register
+--------
+User submits form
+→ validate input
+→ hash password
+→ insert user
+→ insert categories
+→ create JWT
+→ return token
+
+Login
+-----
+User submits credentials
+→ find user
+→ compare password
+→ create JWT
+→ return token
+
+GetMe
+-----
+Frontend sends JWT
+→ middleware verifies token
+→ get user from DB
+→ return profile
+
+*****
+Important Security Features
+
+This code correctly uses:
+
+password hashing
+JWT authentication
+SQL parameterization
+transactions
+password hiding
+error handling
+connection releasing
+
+These are all best practices for backend authentication systems.
+*/
+
+/*
+req.userId
+[req.userId]
+
+Comes from authentication middleware.
+
+Usually middleware:
+
+reads JWT token
+verifies token
+extracts userId
+attaches to request
+*/
