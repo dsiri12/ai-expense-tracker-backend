@@ -45,3 +45,21 @@ const runMigration = async () => {
 };
 
 runMigration();
+
+
+/*
+Overall Flow
+Start
+  ↓
+Check for --reset
+  ↓
+(Optional) Drop tables
+  ↓
+Read schema.sql
+  ↓
+Execute SQL
+  ↓
+Create tables
+  ↓
+Close DB connection
+*/
