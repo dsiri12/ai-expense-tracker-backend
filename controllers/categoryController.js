@@ -58,6 +58,8 @@ export const updateCategory = async (req, res) => {
 
        [name, icon, color, id, req.userId]
     );
+    // COALESCE: Use new value if provided
+    // Otherwise keep old value
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'Category not found' });
@@ -73,7 +75,7 @@ export const updateCategory = async (req, res) => {
 
 export const deleteCategory = async (req, res) => {
   const { id } = req.params;
-700
+
   try {
     const result = await pool.query(
       "DELETE FROM categories WHERE id = $1 AND user_id = $2 RETURNING id",
@@ -91,3 +93,51 @@ export const deleteCategory = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+/*
+Every query uses:
+
+WHERE user_id = req.userId
+
+This is extremely important.
+
+It guarantees:
+
+users only access their own data
+
+-----
+Request Flow
+Frontend Request
+       ↓
+JWT Middleware
+       ↓
+req.userId added
+       ↓
+Category Controller
+       ↓
+SQL Query
+       ↓
+Response Returned
+
+----
+
+This controller file:
+
+fetches categories
+creates categories
+updates categories
+deletes categories
+validates input
+handles database errors
+protects user data ownership
+returns JSON responses
+
+It follows good backend practices:
+
+parameterized SQL
+authentication checks
+error handling
+RESTful structure
+secure multi-user access
+-------
+*/
