@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 8000;
 app.use(cors());
 app.use(express.json()); // req.body
 
-app.get("/", (req, res) => {
+app.get("/ping", (req, res) => {
   res.json({ message: "AI Expense Tracker API is running" });
 });
 
