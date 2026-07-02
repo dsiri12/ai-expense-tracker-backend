@@ -65,11 +65,7 @@ export const getTransactions = async (req, res) => {
     console.error('GetTransactions error:', error);
     res.status(500).json({ message: 'Server error' });
   }
-
-
-
 }
-
 
 
 export const getTransactionById = async (req, res) => {
@@ -98,9 +94,6 @@ export const getTransactionById = async (req, res) => {
   }
 }
 
-
-
-
 export const createTransaction = async (req, res) => {
   const { categoryId, amount, type, description, notes, transactionDate } = req.body;
 
@@ -126,10 +119,6 @@ export const createTransaction = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
-
-
-
-
 
 
 export const updateTransaction = async (req, res) => {
@@ -160,4 +149,27 @@ export const updateTransaction = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const deleteTransaction = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      `DELETE FROM transactions
+       WHERE id = $1 AND user_id = $2
+       RETURNING id`,
+      [id, req.userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    res.json({ message: "Transaction deleted" });
+  } catch (error) {
+    console.error("DeleteTransaction error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 

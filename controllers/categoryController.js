@@ -9,7 +9,7 @@ export const getCategories = async (req, res) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error('GetCategories error:', error);
+    console.error('getCategories error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 }
