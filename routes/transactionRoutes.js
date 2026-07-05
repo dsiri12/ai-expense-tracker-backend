@@ -4,7 +4,8 @@ import {
   getTransactionById,
   createTransaction,
   updateTransaction,
-  deleteTransaction
+  deleteTransaction,
+  analyzeTransactions,
 } from '../controllers/transactionController.js';
 
 import { protect } from '../middleware/authMiddleware.js';
@@ -18,5 +19,7 @@ router.get('/:id', getTransactionById);
 router.post('/', createTransaction);
 router.put('/:id', updateTransaction);
 router.delete('/:id', deleteTransaction);
+
+router.post('/analyze', analyzeTransactions);
 
 export default router;

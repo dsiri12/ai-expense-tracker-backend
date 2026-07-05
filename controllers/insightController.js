@@ -4,16 +4,12 @@ import {
   generateBudgetAlert,
   generateSavingsTips,
 } from '../utils/gemini.js';
-
-const getUserCurrency = async (userId) => {
-  const result = await pool.query('SELECT currency FROM users WHERE id = $1', [userId]);
-  return result.rows[0]?.currency || 'USD';
-}
+import { getUserCurrency } from '../utils/getUserCurrency.js';
 
 export const getInsights = async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM ai_insights WHERE iser_id = $1 ORDER BY created_at DESC LIMIT 50',
+      'SELECT * FROM ai_insights WHERE user_id = $1 ORDER BY created_at DESC LIMIT 50',
       [req.userId]
     );
 
@@ -175,6 +171,39 @@ const buildBudgetAlert = async (userId, categoryId) => {
     });
 
     return { content, periodStart: null, periodEnd: null };
+};
+
+export const generateInsight = async (req, res) => {
+    const { type, categoryId } = req.body;
+
+    if (!type) {
+        return res.status(400).json({ message: 'Insight type is required' });
+    }
+
+    try {
+        let result;
+        if (type === 'monthly_summary') {
+            result = await buildMonthlyInsight(req.userId);
+        } else if (type === 'savings_tips') {
+            result = await buildSavingsTips(req.userId);
+        } else if (type === 'budget_alert') {
+            result = await buildBudgetAlert(req.userId, categoryId);
+        } else {
+            return res.status(400).json({ message: 'Unknown insight type' });
+        }
+
+        const inserted = await pool.query(
+            `INSERT INTO ai_insights (user_id, insight_type, period_start, period_end, content_json)
+             VALUES ($1, $2, $3, $4, $5)
+             RETURNING *`,
+            [req.userId, type, result.periodStart, result.periodEnd, result.content]
+        );
+
+        res.status(201).json(inserted.rows[0]);
+    } catch (error) {
+        console.error('GenerateInsight error:', error);
+        res.status(error.status || 500).json({ message: error.message || 'Server error' });
+    }
 };
 
 
