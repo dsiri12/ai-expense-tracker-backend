@@ -69,6 +69,8 @@ Constraints:
 - Provide 3 recommendations.
 - Reference actual numbers from the data. Tone: friendly but honest.`;
 
+    console.log(`generateMonthlyInsight prompt=${prompt}`)
+
     try {
         const response = await genAI.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -114,6 +116,8 @@ Severity guide:
 - warning: 70-100% spent
 - critical: over 100% spent`;
 
+    console.log(`generateBudgetAlert prompt=${prompt}`)
+
     try {
         const response = await genAI.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -153,6 +157,8 @@ Return ONLY valid JSON (no markdown):
 }
 
 Provide exactly 4 tips. Each tip should reference an actual category from the data and include a realistic monthly savings estimate.`;
+
+    console.log(`generateSavingsTips prompt=${prompt}`)
 
     try {
         const response = await genAI.models.generateContent({
@@ -202,6 +208,8 @@ Return ONLY valid JSON (no markdown):
   "highlight": "Single short phrase capturing the key takeaway (e.g., 'Heavy on dining', 'Stable income', 'Dining spike')"
 }`;
 
+    console.log(`analyzeTransactionList prompt=${prompt}`)
+
     try {
         const response = await genAI.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -248,6 +256,8 @@ Return ONLY valid JSON (no markdown) in this exact structure:
 }
 
 Provide one analysis per budget, in the same order.`;
+
+    console.log(`analyzeBudgetList prompt=${prompt}`)
 
     try {
         const response = await genAI.models.generateContent({
