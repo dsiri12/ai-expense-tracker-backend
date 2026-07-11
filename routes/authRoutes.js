@@ -1,10 +1,12 @@
 import express from 'express';
 import { register, login, getMe } from '../controllers/authController.js';
 import { protect } from '../middleware/authMiddleware.js';
+import { validate } from "../middleware/validate.js";
+import { registerSchema } from "../validators/auth.validator.js";
 
 const router = express.Router();
 
-router.post('/register', register);
+router.post('/register', validate(registerSchema), register);
 router.post('/login', login);
 router.get('/me', protect, getMe);
 

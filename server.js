@@ -1,4 +1,5 @@
 import express from 'express';
+// import expressOasGenerator from 'express-oas-generator';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -12,10 +13,16 @@ import insightRoutes from "./routes/insightRoutes.js";
 dotenv.config();
 
 const app = express();
+// expressOasGenerator.init(app, {}); 
+// to overwrite generated specification's values use second argument.
+// https://www.npmjs.com/package/express-oas-generator
+
 const PORT = process.env.PORT || 8000;
 
 app.use(cors());
 app.use(express.json()); // req.body
+/** place handleRequests as the very last middleware */
+// expressOasGenerator.handleRequests();
 
 app.get("/ping", (req, res) => {
   res.json({ message: "AI Expense Tracker API is running" });
