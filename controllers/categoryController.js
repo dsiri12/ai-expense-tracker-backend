@@ -17,13 +17,6 @@ export const getCategories = async (req, res) => {
 export const createCategory = async (req, res) => {
   const { name, type, icon, color } = req.body;
 
-  if (!name || !type) {
-    return res.status(400).json({ message: 'Name and type are required' });
-  }
-  if (!['income', 'expense'].includes(type)) {
-    return res.status(400).json({ message: 'Type must be income or expense' });
-  }
-
   try {
     const result = await pool.query(
       `INSERT INTO categories (user_id, name, type, icon, color, is_default)
