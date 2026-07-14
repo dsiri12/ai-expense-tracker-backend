@@ -8,7 +8,7 @@ import {
   analyzeTransactions,
 } from '../controllers/transactionController.js';
 import { validate } from "../middleware/validate.js";
-import { createTransactionSchema, updateTransactionSchema } from "../validators/transaction.validators.js";
+import { createTransactionSchema, updateTransactionSchema } from "../validators/transaction.validator.js";
 
 import { protect } from '../middleware/authMiddleware.js';
 
