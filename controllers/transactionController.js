@@ -99,14 +99,6 @@ export const getTransactionById = async (req, res) => {
 export const createTransaction = async (req, res) => {
   const { categoryId, amount, type, description, notes, transactionDate } = req.body;
 
-  if (!amount || !type || !transactionDate) {
-    return res.status(400).json({ message: 'Amount, type, and transactionDate are required' });
-  }
-
-  if (!['income', 'expense'].includes(type)) {
-    return res.status(400).json({ message: 'Type must be income or expense' });
-  }
-
   try {
     const result = await pool.query(
       `INSERT INTO transactions (user_id, category_id, amount, type, description, notes, transaction_date)

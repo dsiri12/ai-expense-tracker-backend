@@ -7,6 +7,8 @@ import {
   deleteTransaction,
   analyzeTransactions,
 } from '../controllers/transactionController.js';
+import { validate } from "../middleware/validate.js";
+import { createTransactionSchema, updateTransactionSchema } from "../validators/transaction.validators.js";
 
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -16,8 +18,8 @@ router.use(protect);
 
 router.get('/', getTransactions);
 router.get('/:id', getTransactionById);
-router.post('/', createTransaction);
-router.put('/:id', updateTransaction);
+router.post('/', validate(createTransactionSchema), createTransaction);
+router.put('/:id', validate(updateTransactionSchema), updateTransaction);
 router.delete('/:id', deleteTransaction);
 
 router.post('/analyze', analyzeTransactions);
