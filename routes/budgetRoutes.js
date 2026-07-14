@@ -6,6 +6,9 @@ import {
   deleteBudget,
   analyzeBudgets,
 } from '../controllers/budgetController.js';
+import { validate } from "../middleware/validate.js";
+import { createBudgetSchema, updateBudgetSchema } from "../validators/budget.validator.js";
+
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -13,8 +16,8 @@ const router = express.Router();
 router.use(protect);
 
 router.get('/', getBudgets);
-router.post('/', createBudget);
-router.put('/:id', updateBudget);
+router.post('/', validate(createBudgetSchema), createBudget);
+router.put('/:id', validate(updateBudgetSchema), updateBudget);
 router.delete('/:id', deleteBudget);
 
 router.post('/analyze', analyzeBudgets);
