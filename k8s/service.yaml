@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-expense-tracker-backend-service
+
+spec:
+  selector:
+    app: ai-expense-tracker-backend
+
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 5000
+
+  type: ClusterIP
+
+# other Kubernetes Pods can call your backend using:
+# http://ai-expense-tracker-backend-service:3000
+
+# Service port                 Container port
+#      3000  ──────────────────────> 5000

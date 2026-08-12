@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-expense-tracker-backend-deployment
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: ai-expense-tracker-backend
+
+  template:
+    metadata:
+      labels:
+        app: ai-expense-tracker-backend
+
+    spec:
+      containers:
+        - name: ai-expense-tracker-backend
+          image: ai-expense-tracker-backend:1.0.0
+          ports:
+            - containerPort: 5000
+
+          envFrom:
+            - configMapRef:
+                name: ai-expense-tracker-configmap
+
+            - secretRef:
+                name: ai-expense-tracker-backend-secret
