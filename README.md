@@ -43,3 +43,7 @@ Handling connection for 8000
 Handling connection for 8000
 Handling connection for 8000
 Handling connection for 8000
+
+$ kubectl apply -f k8s/hpa.yaml
+horizontalpodautoscaler.autoscaling/ai-expense-tracker-backend-hpa created
+

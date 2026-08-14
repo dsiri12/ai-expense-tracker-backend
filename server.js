@@ -24,7 +24,7 @@ app.use(express.json()); // req.body
 /** place handleRequests as the very last middleware */
 // expressOasGenerator.handleRequests();
 
-app.get("/ping", (req, res) => {
+app.get("/health", (req, res) => {
   res.json({ message: "AI Expense Tracker API is running" });
 });
 

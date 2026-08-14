@@ -18,6 +18,7 @@ spec:
       containers:
         - name: ai-expense-tracker-backend
           image: ai-expense-tracker-backend:1.0.0
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000
 
@@ -27,3 +28,26 @@ spec:
 
             - secretRef:
                 name: ai-expense-tracker-backend-secret
+
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 20
+            periodSeconds: 20
