@@ -1,8 +1,33 @@
-https://www.youtube.com/watch?v=VZbT4I_98_k&t=3000s
+# delete deploy k8s objects
+
+$ kubectl delete -f k8s/
+deployment.apps "nginx-deployment" deleted from default namespace
+service "nginx-service" deleted from default namespace
+
+$ kubectl get all
+
+# build, push and run:
+
+docker login
+docker build -t ai-expense-tracker-backend .
+docker tag ai-expense-tracker-backend:latest dsiri12/ai-expense-tracker-backend:1.0.1
+docker push dsiri12/ai-expense-tracker-backend:1.0.1
+
+---rm local image _ai-expense-tracker-backend_
+
+update k8s/deployment.yaml
+...
+image: dsiri12/ai-expense-tracker-backend:1.0.1
+...
+kubectl apply -f k8s/
+
+kubectl port-forward service/ai-expense-tracker-backend-service 3000:3000
+
+=========================
 
 docker build -t ai-expense-tracker-backend .
 
-$ docker tag ai-expense-tracker-backend:latest ai-expense-tracker-backend:1.0.0
+$ docker tag ai-expense-tracker-backend:latest
 
 $ kubectl apply -f k8s/configmap.yaml
 configmap/ai-expense-tracker-configmap created
@@ -16,8 +41,10 @@ deployment.apps/ai-expense-tracker-backend-deployment created
 $ kubectl apply -f k8s/service.yaml
 service/ai-expense-tracker-backend-service created
 
-or
 $ kubectl apply -f k8s/
+kubectl port-forward service/ai-expense-tracker-backend-service 3000:3000
+
+=========
 
 $ kubectl get pods
 NAME READY STATUS RESTARTS AGE
@@ -46,4 +73,3 @@ Handling connection for 8000
 
 $ kubectl apply -f k8s/hpa.yaml
 horizontalpodautoscaler.autoscaling/ai-expense-tracker-backend-hpa created
-

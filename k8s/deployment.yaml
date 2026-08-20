@@ -17,10 +17,10 @@ spec:
     spec:
       containers:
         - name: ai-expense-tracker-backend
-          image: ai-expense-tracker-backend:1.0.0
+          image: dsiri12/ai-expense-tracker-backend:1.0.1
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 5000
+            - containerPort: 3000
 
           envFrom:
             - configMapRef:
@@ -41,13 +41,13 @@ spec:
           readinessProbe:
             httpGet:
               path: /health
-              port: 5000
+              port: 3000
             initialDelaySeconds: 5
             periodSeconds: 10
 
           livenessProbe:
             httpGet:
               path: /health
-              port: 5000
+              port: 3000
             initialDelaySeconds: 20
             periodSeconds: 20

@@ -17,7 +17,7 @@ const app = express();
 // to overwrite generated specification's values use second argument.
 // https://www.npmjs.com/package/express-oas-generator
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json()); // req.body

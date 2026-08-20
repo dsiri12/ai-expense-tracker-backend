@@ -10,7 +10,7 @@ spec:
   ports:
     - protocol: TCP
       port: 3000
-      targetPort: 5000
+      targetPort: 3000
 
   type: ClusterIP
 
@@ -18,4 +18,4 @@ spec:
 # http://ai-expense-tracker-backend-service:3000
 
 # Service port                 Container port
-#      3000  ──────────────────────> 5000
+#      3000  ──────────────────────> 3000
